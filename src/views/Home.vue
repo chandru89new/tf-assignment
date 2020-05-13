@@ -1,18 +1,54 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+  <div>
+    <AddTodo
+      @add="addTodo"
+      :loading="getAddingStatus"
+      :error="getAddingError"
+    />
+    <hr class="my-10" />
+    <TodoContainer
+      :todos="todos"
+      :loading="getTodoLoading"
+      :error="error"
+      @toggleTodoStatus="toggleTodo"
+      @deleteTodo="deleteTodo"
+    />
   </div>
 </template>
-
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
-
+import { mapActions } from "vuex";
 export default {
-  name: "Home",
   components: {
-    HelloWorld
-  }
+    TodoContainer: () => import("@/components/TodoContainer"),
+    AddTodo: () => import("@/components/AddTodo"),
+  },
+  computed: {
+    todos() {
+      return this.$store.getters.todos("data");
+    },
+    getTodoLoading() {
+      return this.$store.getters.todos("loading");
+    },
+    error() {
+      return this.$store.getters.todos("error");
+    },
+    getAddingStatus() {
+      return this.$store.getters.addTodo("loading");
+    },
+    getAddingError() {
+      return this.$store.getters.addTodo("error");
+    },
+  },
+  mounted() {
+    this.getTodos();
+  },
+  methods: {
+    ...mapActions([
+      "addTodo",
+      "getTodos",
+      "toggleTodo",
+      "deleteTodo",
+    ]),
+  },
 };
 </script>
